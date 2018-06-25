@@ -60,7 +60,7 @@ while done==False:
         packet = [Xaxis, Yaxis + ( 1 << 5)] #now we will send this packet over to the arduino
         sendPacket(Xaxis)
         sendPacket(Yaxis + (1 << 5))
-        
+        time.sleep(.05)     #delay is needed for accuracy on arduino 
 
 
 

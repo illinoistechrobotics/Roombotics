@@ -40,12 +40,12 @@ void loop() {
         
     }
 
-   /* Serial.print("X: " + (String)Xaxis+ " Y: " + (String)Yaxis);
+    Serial.print("X: " + (String)Xaxis+ " Y: " + (String)Yaxis);
     for(int i =0; i < 12; i++)
     {
       Serial.print(" " + (String)i + " " + (String)button[i]);
     }
-    Serial.println("");  */ //telemetry for arduino
+    Serial.println("");   //telemetry for arduino
     
     driveRoomba(Xaxis, Yaxis, 14,16); // use current X and Y values to drive the robot
   }
