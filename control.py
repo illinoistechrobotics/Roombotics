@@ -9,7 +9,7 @@ def sendPacket(byte): #user defines packet
         elements = [i]
         print( bytes(elements))
         ser.write(bytes(elements)) #sends packets over xbee
-    time.sleep(.01); #wait a bit between sending
+    time.sleep(.005); #wait a bit between sending
 
     return;
 
@@ -41,11 +41,13 @@ while done==False:
     for i in range(joystick_count): #take that num and iterate through joysticks to get their data
         joystick = pygame.joystick.Joystick(i)
         joystick.init()
-
-        for i in range(4): #send the first few values of buttons (adding more and decreasing the delay on sending packets seems to make recieved packets less accurate)
-            button[i] = joystick.get_button(i)
-            sendPacket(((2)<<5)+button[i]+(i<<1))
-            print(button)
+        buttonPacket = 0
+        for j in range(5): #send the first few values of buttons (adding more and decreasing the delay on sending packets seems to make recieved packets less accurate)
+            buttonPacket = (buttonPacket<<1)+joystick.get_button(j)
+           
+           
+        sendPacket(((2)<<5)+buttonPacket)
+        print(buttonPacket)
             
 
         

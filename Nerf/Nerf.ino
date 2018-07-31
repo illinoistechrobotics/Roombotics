@@ -1,4 +1,7 @@
 #include <SoftwareSerial.h>
+#include <Servo.h>
+
+Servo lift,pusher;
 
 
 
@@ -7,13 +10,14 @@ int Xaxis = 0; //This value represents the recieved X value (0 to 30)
 int Yaxis = 0; //This value represents the recieved Y value
 int button[] = {0,0,0,0,0,0,0,0,0,0,0,0}; //This array holds the values of the buttons 
 int inNum; //This holds the recieved byte
-
-//int button_address = (inNum & 30)>>1
-//button[button_address] = inNum & 1;
+int pusherTime=0;
 
 
 void setup() {
-  // put your setup code here, to run once:  
+  // put your setup code here, to run once:
+  lift.attach(9);
+  pusher.attach(3);
+  
   Serial.begin(57600);          //this Serial line will read data from the xbee
   roombaSerial.begin(57600);    //this Serial line will send commands to the roomba
 
@@ -39,6 +43,7 @@ void loop() {
         Yaxis = inNum & 31; //update y axis with contained value
         break;        
       case 2: //this case updates all the buttons
+      Serial.println("worked");
       
         for(int i = 0; i<5; i++)
         {
@@ -46,6 +51,26 @@ void loop() {
           Serial.println((String)i+" " + button[i]);
         }
         
+          
+  if(button[0]==1)
+  {
+    lift.write(180);
+    //liftAngle=false;
+  }
+  else if(button[1]==1)
+  {
+    lift.write(110);
+    //liftAngle=true;
+  }
+  
+  if(button[2]==1)
+  {
+    pusher.write(55);
+  }
+  else
+  {
+    pusher.write(180);
+  }
   
         break;
         
