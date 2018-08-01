@@ -1,44 +1,47 @@
+//Main program for Xbee Communication & Roomba Control
+//Loosely based on the principals of SerialCTL written by Nash Kaminski
+//By learning and experimenting with the principals of the program, future ITR members will gain a strong base of understanding
+//for the SerialCTL program
+
+
 #include <SoftwareSerial.h>
 
+int roombaRX = 10, roombaTX = 11; //these are the pins that will transmit and recieve data from the Roomba
+SoftwareSerial roombaSerial(roombaRX,roombaTX);
 
-
-SoftwareSerial roombaSerial(10,11);
 int Xaxis = 0; //This value represents the recieved X value (0 to 30)
 int Yaxis = 0; //This value represents the recieved Y value
 int button[] = {0,0,0,0,0,0,0,0,0,0,0,0}; //This array holds the values of the buttons 
-int inNum; //This holds the recieved byte
+int inNum; //This holds the recieved byte from the Xbee
 
-//int button_address = (inNum & 30)>>1
-//button[button_address] = inNum & 1;
-
-
-void setup() {
-  // put your setup code here, to run once:  
+void setup() {  
   Serial.begin(57600);          //this Serial line will read data from the xbee
   roombaSerial.begin(57600);    //this Serial line will send commands to the roomba
 
-  roombaSerial.write(128); //this code initializes the roomba
+  roombaSerial.write(128); //These two bytes initialize the roomba
   delay(1000);
   roombaSerial.write(130);
   delay(1000);  
-  roombaSerial.write(132);
+  roombaSerial.write(132); //This sets the Roomba in 'unsafe' mode
   delay(1000);
     
   }
 
 void loop() {
+  //The laptop-xbee-remote combination, or control station, will transmit bytes to the roomba that contain information on the state of the remote
 
-  while(Serial.available() > 0){ //if there is new data from the remote, update the robot
+  while(Serial.available() > 0){ //if there is new data from the control station, interpret it
+    
     inNum = int(Serial.read());  //get the value
 
-    switch(inNum >>5){ //find out what the value represents with bitwise operators
-      case 0: 
+    switch(inNum >>5){ //Bit shift to the right 5 places, leaving us with the 3 most significant bits.  This value shows what data the byte represents
+      case 0: //The byte represents the X value 
         Xaxis = inNum & 31; //update x axis with contained value
         break;
-      case 1:
+      case 1: //The byte represents the Y value
         Yaxis = inNum & 31; //update y axis with contained value
         break;        
-      case 2: //this case updates all the buttons
+      case 2: //The byte represents the first five button values
       
         for(int i = 0; i<5; i++)
         {
@@ -50,16 +53,8 @@ void loop() {
         break;
         
     }
-
-   /* Serial.print("X: " + (String)Xaxis+ " Y: " + (String)Yaxis);
-    for(int i =0; i < 12; i++)
-    {
-      Serial.print(" " + (String)i + " " + (String)button[i]);
-    }
-    Serial.println("");   //telemetry for arduino
-*/
   
-    driveRoomba(Xaxis, Yaxis, 14,16); // use current X and Y values to drive the robot
+    driveRoomba(Xaxis, Yaxis, 14,16); //This method takes the current X and Y value of the remote and translates it into Roomba motion.
   }
 
 }
